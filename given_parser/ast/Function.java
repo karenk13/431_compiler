@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.List;
+import cfg.*;
 
 public class Function
 {
@@ -45,7 +46,10 @@ public class Function
    public List<Declaration> getParams() {
         return params;
    }
-   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
-       return body.cfg(types, decls, func, curFunc);
+   public List<Declaration> getDecls() {
+        return locals;
+   }
+   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+       return body.cfg(types, decls, func, curFunc, startNode, exitNode);
    }
 }

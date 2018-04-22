@@ -19,4 +19,9 @@ public class StructType
    public String getName() {
       return name;
    }
+
+   public String toLLVMType() {
+      return "%struct." + name;
+   }
+
 }

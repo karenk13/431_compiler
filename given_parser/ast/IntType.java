@@ -7,4 +7,9 @@ public class IntType
    public boolean equals (Type left) {
       return (left instanceof IntType);
    }
+
+   public String toLLVMType() {
+      return "i32";
+   }
+
 }

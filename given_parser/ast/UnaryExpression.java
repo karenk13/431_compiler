@@ -1,6 +1,9 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
 
 public class UnaryExpression
    extends AbstractExpression
@@ -57,5 +60,35 @@ public class UnaryExpression
    public void cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
    	System.out.println("unary expression: " + operator);
 	operand.cfg(types, decls, func, curFunc);
+   }
+   
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+      return operand.getType(types, decls, func, curFunc).toLLVMType();
+   }
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+      List<LLVM> list = new ArrayList<LLVM>();
+      List<LLVM> exp = null;
+      String expReg = "";
+      String expType = "";
+      if (operator == Operator.NOT) {
+          exp = operand.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+          expReg = exp.get(exp.size() - 1).getResultReg();
+          expType = exp.get(exp.size() - 1).getResultType();
+          // TODO make a register with all ones instead of placeholder
+          list.addAll(exp);
+          list.add(new BinaryLLVM( "%u" + exitNode.regNum, "XOR", expType, "111111111", expReg));
+          exitNode.incrementReg();
+      } else {
+          exp = operand.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+          expReg = exp.get(exp.size() - 1).getResultReg();
+          expType = exp.get(exp.size() - 1).getResultType();
+          // TODO make a register with 0 if needed
+          list.addAll(exp);
+          list.add(new BinaryLLVM( "%u" + exitNode.regNum, "SUB", expType, "0", expReg));
+          exitNode.incrementReg();
+      }
+      
+      return list;     
    }
 }

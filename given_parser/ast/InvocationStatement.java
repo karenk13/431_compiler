@@ -1,6 +1,10 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
+
 
 public class InvocationStatement
    extends AbstractStatement
@@ -25,8 +29,20 @@ public class InvocationStatement
         return false;
    }
  
-   public void cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
-       expression.cfg(types, decls, func, curFunc);
+   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+       //expression.cfg(types, decls, func, curFunc);
+       startNode.addStatement(this);
+       startNode.addLLVMList(expression.toLLVM(types, decls, func, curFunc, startNode, exitNode));
+       return startNode;
+   }
+
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return "";
+   }
+
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return new ArrayList<LLVM>();     
    }
 
 }

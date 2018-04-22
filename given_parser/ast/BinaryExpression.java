@@ -1,6 +1,9 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
 
 public class BinaryExpression
    extends AbstractExpression
@@ -86,6 +89,8 @@ public class BinaryExpression
       }
    }
 
+
+
    public void typeOpCheck(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
      //left.typeOpCheck(types, decls, func, curFunc);
      //right.typeOpCheck(types, decls, func, curFunc);
@@ -148,5 +153,93 @@ public class BinaryExpression
    	System.out.println("binary expression: " + operator);
 	left.cfg(types, decls, func, curFunc);
 	right.cfg(types, decls, func, curFunc);
+   }
+
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+      switch (operator){
+	case TIMES:
+	    return "i32";
+        case DIVIDE:
+	    return "i32";
+        case PLUS:
+	    return "i32";
+	case MINUS:
+	    return "i32";
+	default:
+            return "i1";
+      }
+   }
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+
+       List<LLVM> leftI = left.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+       List<LLVM> rightI = right.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+
+       String leftResult = leftI.get(leftI.size() - 1).getResultReg();
+       String rightResult = rightI.get(rightI.size() - 1).getResultReg();
+      
+       String leftType = leftI.get(leftI.size() - 1).getResultType();
+
+       LLVM finalInst = null;
+       switch (operator){
+	 case TIMES:
+            finalInst = new BinaryLLVM("%u" + exitNode.regNum, "MUL", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+         case DIVIDE:
+            finalInst = new BinaryLLVM("%u" + exitNode.regNum, "SDIV", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+         case PLUS:
+            finalInst = new BinaryLLVM("%u" + exitNode.regNum, "ADD", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+	 case MINUS:
+            finalInst = new BinaryLLVM("%u" + exitNode.regNum, "SUB", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+	 case LT:
+            finalInst = new ComparisonLLVM("%u" + exitNode.regNum, "SLT", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+         case GT:
+            finalInst = new ComparisonLLVM("%u" + exitNode.regNum, "SGT", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+         case LE:
+            finalInst = new ComparisonLLVM("%u" + exitNode.regNum, "SLE", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+	 case GE:
+            finalInst = new ComparisonLLVM("%u" + exitNode.regNum, "SGE", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+         case EQ:
+            finalInst = new ComparisonLLVM("%u" + exitNode.regNum, "EQ", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+	 case NE:
+            finalInst = new ComparisonLLVM("%u" + exitNode.regNum, "NE", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+
+	 case AND:
+            finalInst = new BinaryLLVM("%u" + exitNode.regNum, "AND", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+	 case OR:
+            finalInst = new BinaryLLVM("%u" + exitNode.regNum, "OR", leftType, leftResult, rightResult);
+            exitNode.incrementReg();
+            break;
+
+         default:
+            System.out.println("In Binary Something happened");
+       }
+
+       List<LLVM> listLLVM = new ArrayList<LLVM>(leftI);
+       listLLVM.addAll(rightI);
+       listLLVM.add(finalInst);
+       
+       return listLLVM;     
    }
 }

@@ -1,6 +1,10 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
+
 
 public class AssignmentStatement
    extends AbstractStatement
@@ -28,8 +32,47 @@ public class AssignmentStatement
         return false;
    }
 
-   public void cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
-       source.cfg(types, decls, func, curFunc);
+   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+
+              //  "u" + exit.regNum
+       List<LLVM> sourceInst = source.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+       List<LLVM> leftInst = target.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+
+
+       String resultReg = sourceInst.get(sourceInst.size() - 1).getResultReg();
+       String resultType = sourceInst.get(sourceInst.size() - 1).getResultType();
+       
+       String leftReg = leftInst.get(leftInst.size() - 1).getResultReg();
+       String leftType = leftInst.get(leftInst.size() - 1).getResultType();
+
+       LLVM load = new LoadLLVM("%u" + exitNode.regNum, resultType, resultReg);
+       LLVM store = new StoreLLVM(resultType, "%u" + exitNode.regNum, leftType, leftReg);
+       exitNode.incrementReg();
+
+       List<LLVM> finalList = new ArrayList<LLVM>(sourceInst);
+       finalList.addAll(leftInst);
+       finalList.add(load);
+       finalList.add(store);
+
+       startNode.addLLVMList(finalList);
+
+       startNode.addStatement(this);
+       return startNode;
    }
-   
+
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return "";
+   }
+
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       //LLVM load = new LoadLLVM();
+       //LLVM load = new LoadLLVM();
+
+
+      // LLVM store = new StoreLLVM();
+
+
+       return new ArrayList<LLVM>();     
+   }
 }

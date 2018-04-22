@@ -1,6 +1,8 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
 
 public class Program
 {
@@ -66,8 +68,15 @@ public class Program
 
    public void cfg() {
       for (int i = 0; i < funcs.size(); i++) {
-	 System.out.println(funcs.get(i).getName());
-         cfgNodes.add(funcs.get(i).cfg(types, decls, funcs, funcs.get(i)));
+	 //System.out.println(funcs.get(i).getName());
+         CFGNode startNode = new CFGNode(funcs.get(i).getName(), 0);
+         cfgNodes.add(startNode);
+         CFGNode exitNode = new CFGNode(funcs.get(i).getName(), -1);
+         // we will keep track of the Block number and Register number for LLVM reference in the exit node (since it is always passed around)
+         funcs.get(i).cfg(types, decls, funcs, funcs.get(i), startNode, exitNode);
+      }
+      for (int i = 0; i < cfgNodes.size(); i++) {
+         cfgNodes.get(i).printOut();
       }
    }
 

@@ -1,6 +1,9 @@
 package ast;
 
 import java.util.List;
+import llvm.*;
+import cfg.*;
+import java.util.ArrayList;
 
 public class LvalueId
    implements Lvalue
@@ -21,6 +24,21 @@ public class LvalueId
          }
       }
       return new NullType();
+   }
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+      String type = "";
+      for (int i = 0; i < decls.size(); i++ ) {
+         if (decls.get(i).getName().equals(this.id)) {
+             // get id and type
+             type = decls.get(i).getType().toLLVMType();
+         }
+      }
+       LLVM inst = new LoadLLVM("%u" + exitNode.regNum, type, "%" + id);
+       exitNode.incrementReg();
+       List<LLVM> list = new ArrayList<LLVM>();
+       list.add(inst);
+
+       return list;
    }
 
    

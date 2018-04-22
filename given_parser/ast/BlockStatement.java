@@ -2,6 +2,9 @@ package ast;
 
 import java.util.List;
 import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
+
 
 public class BlockStatement
    extends AbstractStatement
@@ -42,10 +45,27 @@ public class BlockStatement
 	return false;
    }
 
-   public void cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+      //System.out.println("Block: " + startNode.count);
+      CFGNode temp = null;      
+      CFGNode next = new CFGNode("block: " + startNode.name, exitNode.blockNum );
+      exitNode.incrementBlock();
+      startNode.addChild(next);
+      next.addParent(startNode);
       for (int i = 0; i < statements.size(); i++ ) {
-          statements.get(i).cfg(types, decls, func, curFunc);
+          temp = statements.get(i).cfg(types, decls, func, curFunc, next, exitNode);
+          next = temp;
       }
+      return next;
+   }
+
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return "";
+   }
+
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return new ArrayList<LLVM>();     
    }
 
 }

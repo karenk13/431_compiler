@@ -1,6 +1,10 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
+
 
 public class ReturnStatement
    extends AbstractStatement
@@ -30,8 +34,30 @@ public class ReturnStatement
         return true;
    }
 
-   public void cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
-       expression.cfg(types, decls, func, curFunc);
+   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+       //expression.cfg(types, decls, func, curFunc);
+       //CFGNode newNode = new CFGNode(startNode.name, startNode.count + 1);
+       exitNode.addStatement(this);
+       startNode.addChild(exitNode);
+       exitNode.addParent(startNode);
+       List<LLVM> inst = expression.toLLVM(types, decls, func, curFunc, startNode, exitNode);
+       String resultReg = inst.get(inst.size() - 1).getResultReg();
+       String resultType = inst.get(inst.size() - 1).getResultType();
+       LLVM ret = new ReturnLLVM(resultType, resultReg);
+       exitNode.addLLVMList(inst);
+       
+       return exitNode;
    }
+
+
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return "";
+   }
+
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return new ArrayList<LLVM>();     
+   }
+
 
 }

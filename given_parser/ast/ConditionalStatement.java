@@ -1,6 +1,10 @@
 package ast;
 
 import java.util.List;
+import java.util.ArrayList;
+import cfg.*;
+import llvm.*;
+
 
 public class ConditionalStatement
    extends AbstractStatement
@@ -39,13 +43,47 @@ public class ConditionalStatement
         return thenBlock.checkReturn() && elseBlock.checkReturn();
    }
 
-   public void cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
-       guard.cfg(types, decls, func, curFunc);
-       System.out.print("If: ");
-       thenBlock.cfg(types, decls, func, curFunc);
-       System.out.print("Else: ");
-       elseBlock.cfg(types, decls, func, curFunc);
+   public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
+       //guard.cfg(types, decls, func, curFunc);
+       startNode.addGuard(guard);
+       startNode.addLLVMList(guard.toLLVM(types, decls, func, curFunc, startNode, exitNode));
+ 
+       System.out.println("If: ");
+       CFGNode thenNode = new CFGNode("then: " + startNode.name, exitNode.blockNum );
+       exitNode.incrementBlock();
+       thenNode.addParent(startNode);
+       startNode.addChild(thenNode);
+       CFGNode thenEndNode = thenBlock.cfg(types, decls, func, curFunc, thenNode, exitNode);
+
+  //     System.out.println("Else: ");
+       CFGNode elseNode = new CFGNode("else: " + startNode.name, exitNode.blockNum);
+       exitNode.incrementBlock();
+       elseNode.addParent(startNode);
+       startNode.addChild(elseNode);
+       CFGNode elseEndNode = elseBlock.cfg(types, decls, func, curFunc, elseNode, exitNode);
+       
+
+       CFGNode ifEndNode = new CFGNode("endIf: " + startNode.name, exitNode.blockNum );
+       exitNode.incrementBlock();
+       ifEndNode.addParent(thenEndNode);
+       ifEndNode.addParent(elseEndNode);
+
+
+       thenEndNode.addChild(ifEndNode);
+       elseEndNode.addChild(ifEndNode);
+
+       return ifEndNode;
    }
+
+
+   public String typeToLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return "";
+   }
+
+   public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {
+       return new ArrayList<LLVM>();     
+   }
+
 
 }
 

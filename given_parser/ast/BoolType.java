@@ -6,4 +6,9 @@ public class BoolType
    public boolean equals(Type left) {
       return (left instanceof BoolType);
    }
+
+   public String toLLVMType() {
+      return "i1";
+   }
+
 }
