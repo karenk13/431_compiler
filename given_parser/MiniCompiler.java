@@ -25,7 +25,7 @@ public class MiniCompiler
          */
          MiniToJsonVisitor jsonVisitor = new MiniToJsonVisitor();
          JsonValue json = jsonVisitor.visit(tree);
-         System.out.println(json);
+         //System.out.println(json);
 
          /*
             This visitor will build an object representation of the AST
@@ -34,6 +34,16 @@ public class MiniCompiler
          MiniToAstProgramVisitor programVisitor =
             new MiniToAstProgramVisitor();
          ast.Program program = programVisitor.visit(tree);
+
+         for(int i = 0; i < args.length; i++) {
+            if (args[i].equals("-stack")) {
+                program.printLLVM();
+            }
+            if (args[i].equals("-json")) {
+                System.out.println(json);
+            }
+         }
+
       } else {
 	System.out.println("Something is wrong");
 	}
@@ -45,7 +55,10 @@ public class MiniCompiler
    {
       for (int i = 0; i < args.length; i++)
       {
-         if (args[i].charAt(0) == '-')
+         if (args[i].equals("-stack") || args[i].equals("-json")) {
+
+         }
+         else if (args[i].charAt(0) == '-')
          {
             System.err.println("unexpected option: " + args[i]);
             System.exit(1);

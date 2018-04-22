@@ -46,6 +46,28 @@ public class NewExpression
        return "i32";
    }
 
+   public int mallocSize(List<TypeDeclaration> types) {
+      	 String type;
+	 int counter = 0;
+         for (int i = 0; i < types.size(); i++ ) {
+            if (types.get(i).getName().equals(this.id)) {
+               type = new StructType(types.get(i).getLineNum(), this.id).toLLVMType();
+               if(type.equals("i1")) {
+		  counter += 1;
+               }
+               else if(type.equals("i8")) {
+		  counter += 2;
+
+               }
+               else if(type.equals("i32") || type.contains("*")) {
+		  counter += 6;
+
+               }
+	    } 
+         }
+	return counter;
+   }
+
    public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
         String type = "";
       	 for (int i = 0; i < types.size(); i++ ) {
@@ -54,10 +76,22 @@ public class NewExpression
 	    } 
          }
  
-       LLVM inst = new AllocationLLVM("%u" + exitNode.regNum, type);
-       exitNode.incrementReg();
+      // LLVM inst = new AllocationLLVM("%u" + exitNode.regNum, type);
+       //exitNode.incremeVntReg();
        List<LLVM> list = new ArrayList<LLVM> ();
+       //list.add(inst);
+
+       List<String> arg = new ArrayList<String>();
+       arg.add(Integer.toString(mallocSize(types)));
+       LLVM inst = new InvocationLLVM("%u" + exitNode.regNum, "i8*", "malloc", arg);
+       exitNode.incrementReg();
+
+       LLVM inst1 = new MiscLLVM("%u" + exitNode.regNum, "i8*", inst.getResultReg(), type, "BITCAST");
+       exitNode.incrementReg();
+
        list.add(inst);
+       list.add(inst1);
+
        return list;     
    }
 }
