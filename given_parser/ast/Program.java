@@ -138,6 +138,7 @@ public class Program
          initNode.addChild(startNode);
          cfgNodes.add(initNode);
          CFGNode exitNode = new CFGNode(funcs.get(i).getName(), -1);
+         exitNode.incrementBlock();
          // we will keep track of the Block number and Register number for LLVM reference in the exit node (since it is always passed around)
          funcs.get(i).cfg(types, decls, funcs, funcs.get(i), startNode, exitNode);
       }

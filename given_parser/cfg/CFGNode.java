@@ -76,7 +76,7 @@ public class CFGNode
    }  
 
    public void printOut() {
- //      System.out.println(name + " " + count + ": " + llvm.size());
+       System.out.println(name + " " + count + ": " + llvm.size());
        for (int i = 0; i < llvm.size(); i++) {
            llvm.get(i).printOut();
        }

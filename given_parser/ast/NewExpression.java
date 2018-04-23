@@ -46,25 +46,32 @@ public class NewExpression
        return "i32";
    }
 
-   public int mallocSize(List<TypeDeclaration> types) {
+   public int mallocSize(List<TypeDeclaration> types, String id) {
       	 String type;
 	 int counter = 0;
+//	System.out.println("in mallocSize");
          for (int i = 0; i < types.size(); i++ ) {
-            if (types.get(i).getName().equals(this.id)) {
-               type = new StructType(types.get(i).getLineNum(), this.id).toLLVMType();
-               if(type.equals("i1")) {
-		  counter += 1;
-               }
-               else if(type.equals("i8")) {
-		  counter += 2;
-
-               }
-               else if(type.equals("i32") || type.contains("*")) {
-		  counter += 6;
-
+            if (types.get(i).getName().equals(id)) {
+	//	System.out.println("FOUND: " + id);
+	       for (int j = 0; j < types.get(i).getFields().size(); j++) {
+  //                  System.out.println("looking at: "+ types.get(i).getFields().get(j).getName());
+                    type = types.get(i).getFields().get(j).getType().toLLVMType();
+                    if(type.equals("i1")) {
+		        counter += 1;
+               	    }
+                     else if(type.equals("i8")) {
+		        counter += 2;
+                    }
+                    else if(type.equals("i32") || type.contains("*")) {
+		        counter += 6;
+                    } else if (type.contains("%struct.")) {
+                        counter += 6;
+                    }
+//		    System.out.println("type: " + type);
                }
 	    } 
          }
+//	System.out.println("counter: " + counter);
 	return counter;
    }
 
@@ -82,7 +89,7 @@ public class NewExpression
        //list.add(inst);
 
        List<String> arg = new ArrayList<String>();
-       arg.add(Integer.toString(mallocSize(types)));
+       arg.add(Integer.toString(mallocSize(types, this.id)));
        LLVM inst = new InvocationLLVM("%u" + exitNode.regNum, "i8*", "malloc", arg);
        exitNode.incrementReg();
 
