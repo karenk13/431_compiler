@@ -17,7 +17,7 @@ public class ComparisonLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println(result + " = icmp " + cond + " " + type + " " + op1 + ", " + op2 );
+         System.out.println("\t" + result + " = icmp " + cond + " " + type + " " + op1 + ", " + op2 );
     }
 
     public String getResultReg() { return result;}

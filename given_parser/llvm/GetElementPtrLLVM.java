@@ -15,7 +15,7 @@ public class GetElementPtrLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println(result + " = getelementptr " + type + "* " + ptrval + ", i1 0, i32 " + index );
+         System.out.println("\t" + result + " = getelementptr " + type + "* " + ptrval + ", i1 0, i32 " + index );
     }
     public String getResultReg() { return result;}
     public String getResultType() {return type;}

@@ -17,7 +17,7 @@ public class PhiLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.print(result + " = phi " + type + " " );
+         System.out.print("\t" + result + " = phi " + type + " " );
          
          for (int i = 0; i < values.size(); i++) {
              System.out.print("[" + values.get(i) + ", " + labels.get(i) + "]");

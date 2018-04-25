@@ -17,7 +17,7 @@ public class InvocationLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.print( result + " = call " + type + " " + fnptrval + "(");
+         System.out.print("\t" + result + " = call " + type + " " + fnptrval + "(");
 
          for (int i = 0; i < args.size(); i++) {
              System.out.print(args.get(i));

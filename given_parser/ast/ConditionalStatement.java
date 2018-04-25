@@ -48,22 +48,25 @@ public class ConditionalStatement
        startNode.addGuard(guard);
        startNode.addLLVMList(guard.toLLVM(types, decls, func, curFunc, startNode, exitNode));
  
-       System.out.println("If: ");
-       CFGNode thenNode = new CFGNode("then: " + startNode.name, exitNode.blockNum );
+//       System.out.println("If: ");
+       //CFGNode thenNode = new CFGNode("then: " + startNode.name, exitNode.blockNum );
+       CFGNode thenNode = new CFGNode( startNode.name, exitNode.blockNum );
        exitNode.incrementBlock();
        thenNode.addParent(startNode);
        startNode.addChild(thenNode);
        CFGNode thenEndNode = thenBlock.cfg(types, decls, func, curFunc, thenNode, exitNode);
 
   //     System.out.println("Else: ");
-       CFGNode elseNode = new CFGNode("else: " + startNode.name, exitNode.blockNum);
+       //CFGNode elseNode = new CFGNode("else: " + startNode.name, exitNode.blockNum);
+       CFGNode elseNode = new CFGNode(startNode.name, exitNode.blockNum);
        exitNode.incrementBlock();
        elseNode.addParent(startNode);
        startNode.addChild(elseNode);
        CFGNode elseEndNode = elseBlock.cfg(types, decls, func, curFunc, elseNode, exitNode);
        
 
-       CFGNode ifEndNode = new CFGNode("endIf: " + startNode.name, exitNode.blockNum );
+       //CFGNode ifEndNode = new CFGNode("endIf: " + startNode.name, exitNode.blockNum );
+       CFGNode ifEndNode = new CFGNode(startNode.name, exitNode.blockNum );
        exitNode.incrementBlock();
        ifEndNode.addParent(thenEndNode);
        ifEndNode.addParent(elseEndNode);
@@ -71,6 +74,12 @@ public class ConditionalStatement
 
        thenEndNode.addChild(ifEndNode);
        elseEndNode.addChild(ifEndNode);
+
+// add branches
+	String op = ((BinaryExpression) guard).getOp();
+	startNode.addLLVM(new BranchLLVM( op , thenNode.name + thenNode.count, elseNode.name + elseNode.count));
+        thenNode.addLLVM(new BranchImmLLVM(ifEndNode.name + ifEndNode.count));
+        elseNode.addLLVM(new BranchImmLLVM(ifEndNode.name + ifEndNode.count));
 
        return ifEndNode;
    }

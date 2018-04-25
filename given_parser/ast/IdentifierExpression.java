@@ -70,7 +70,7 @@ public class IdentifierExpression
    }
 
    public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
-       LLVM inst = new LoadLLVM("%u" + exitNode.regNum, "i1", "%" + id);
+       LLVM inst = new LoadLLVM("%u" + exitNode.regNum, this.typeToLLVM(types, decls, func, curFunc), "%" + id);
        exitNode.incrementReg();       
 
        List<LLVM> list = new ArrayList<LLVM>();

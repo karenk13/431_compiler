@@ -87,13 +87,13 @@ public class DotExpression
        LLVM inst = new GetElementPtrLLVM("%u" + exitNode.regNum, "%struct." + structName, leftReg, Integer.toString(fieldIndex) );
        exitNode.incrementReg();
 
-       LLVM last = new LoadLLVM("%u"+ exitNode.regNum, inst.getResultType(), inst.getResultReg());
-       exitNode.incrementReg();
+      // LLVM last = new LoadLLVM("%u"+ exitNode.regNum, inst.getResultType(), inst.getResultReg());
+      // exitNode.incrementReg();
 
 
        List<LLVM> finalInst = new ArrayList<LLVM>(leftI);
        finalInst.add(inst);
-       finalInst.add(last);
+      // finalInst.add(last);
 
        return finalInst;     
    }

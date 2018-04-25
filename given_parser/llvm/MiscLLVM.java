@@ -21,7 +21,7 @@ public class MiscLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println(result + " = " + op + " " + type + " " + value + " to " + type2 );
+         System.out.println("\t" + result + " = " + op + " " + type + " " + value + " to " + type2 );
     }
 
     public String getResultReg() { return result;}

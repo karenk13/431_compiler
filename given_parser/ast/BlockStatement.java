@@ -48,7 +48,8 @@ public class BlockStatement
    public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
       //System.out.println("Block: " + startNode.count);
       CFGNode temp = null;      
-      CFGNode next = new CFGNode("block: " + startNode.name, exitNode.blockNum );
+      //CFGNode next = new CFGNode("block: " + startNode.name, exitNode.blockNum );
+      CFGNode next = new CFGNode(startNode.name, exitNode.blockNum );
       exitNode.incrementBlock();
       startNode.addChild(next);
       next.addParent(startNode);

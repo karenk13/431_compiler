@@ -9,7 +9,7 @@ public class BranchImmLLVM implements LLVM {
     }
     
     public void printOut() {
-         System.out.println("br label " + label);
+         System.out.println("\tbr label " + label);
     }
 
     public String getResultReg() { return "";}

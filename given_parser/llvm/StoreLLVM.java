@@ -15,7 +15,7 @@ public class StoreLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println("store " + type1 + " " + value + ", " + type2 + "* " + pointer);
+         System.out.println("\tstore " + type1 + " " + value + ", " + type2 + "* " + pointer);
     }
 
     public String getResultReg() { return pointer;}

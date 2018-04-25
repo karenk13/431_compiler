@@ -1,17 +1,17 @@
 package llvm;
 
-public class AllocationLLVM implements LLVM {
+
+public class NOPLLVM implements LLVM {
     
     public String result;
     public String type;
 
-    public AllocationLLVM (String result, String type) {
+    public NOPLLVM (String result, String type) {
           this.result = result;
           this.type = type;
     }
 
     public void printOut() {
-         System.out.println("\t" + result + " = alloca " + type);
     }
 
     public String getResultReg() { return result;}

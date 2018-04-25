@@ -57,15 +57,12 @@ public class NewExpression
   //                  System.out.println("looking at: "+ types.get(i).getFields().get(j).getName());
                     type = types.get(i).getFields().get(j).getType().toLLVMType();
                     if(type.equals("i1")) {
-		        counter += 1;
+		        counter += 4;
                	    }
-                     else if(type.equals("i8")) {
-		        counter += 2;
-                    }
                     else if(type.equals("i32") || type.contains("*")) {
-		        counter += 6;
+		        counter += 4;
                     } else if (type.contains("%struct.")) {
-                        counter += 6;
+                        counter += 4;
                     }
 //		    System.out.println("type: " + type);
                }

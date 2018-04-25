@@ -75,18 +75,23 @@ public class CFGNode
        this.guard = guard;
    }  
 
+   public String getLabel() {
+       return name + Integer.toString(count) + ":";
+   }
+
    public void printOut() {
-       System.out.println(name + " " + count + ": " + llvm.size());
+       //System.out.println(name + count + ":");
        for (int i = 0; i < llvm.size(); i++) {
            llvm.get(i).printOut();
+           if (llvm.get(i) instanceof DefineFuncLLVM) {
+                System.out.println("{");
+           }
        }
        for (int i = 0; i < children.size(); i++) {
-           if (children.get(i).count >= this.count)
- //         System.out.println("Parent: " + this.count + " Child: " + children.get(i).count); 
-           	{children.get(i).printOut();} 
-          else {
-	//	System.out.println("No");
-           }
+           if (children.get(i).count >= this.count || children.get(i).count == -1) {
+                 System.out.println(children.get(i).getLabel());
+                 children.get(i).printOut();
+           } 
        }
    }
 }

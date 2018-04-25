@@ -13,7 +13,7 @@ public class LoadLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println(result + " = load " + type + "* " + pointer );
+         System.out.println("\t" + result + " = load " + type + "* " + pointer );
     }
 
     public String getResultReg() { return result;}

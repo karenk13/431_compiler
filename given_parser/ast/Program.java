@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import cfg.*;
@@ -42,8 +43,6 @@ public class Program
 
    public void checkReturnTypes() {
       for (int i = 0; i < funcs.size(); i++) {
-         System.out.println(funcs.get(i).getName());
-
 	 funcs.get(i).typeCheck(types, decls, funcs, funcs.get(i));
       }
    }
@@ -74,29 +73,19 @@ public class Program
 	List<LLVM> globalDec = new ArrayList<LLVM>();
 
 	//declarations
-	List<String> args = new ArrayList<String>();
-         args.add("i8*");
-         args.add("...");
-         List<String> blanks = new ArrayList<String>();
-         blanks.add(" ");
-         blanks.add(" ");
-         LLVM s = new DeclareFuncLLVM("scanf", "i32", args, blanks);
-         LLVM p  = new DeclareFuncLLVM("printf", "i32", args, blanks);
-	
-         List<String> args1 = new ArrayList<String>();
-         args1.add("i32");
-         LLVM m = new DeclareFuncLLVM("malloc", "i8*", args1, blanks );
-
-	globalDec.add(s);
-        globalDec.add(p);
-        globalDec.add(m);
 
         //List<String> props = new ArrayList<String>();
         LLVM struct = null;
 	for( int i = 0; i < types.size(); i++) {
              List<String> props = new ArrayList<String>();
+	     String t = "";
              for(int j = 0; j < types.get(i).getFields().size(); j++) {
-                  props.add(types.get(i).getFields().get(j).getType().toLLVMType() );
+                  t = types.get(i).getFields().get(j).getType().toLLVMType();
+                  if(t.contains("%struct.")) {
+                      props.add(t + "*");
+                  } else {
+                      props.add(t);
+                  }
              }
 
              struct = new DeclareStructLLVM(types.get(i).getName(), props);
@@ -105,6 +94,13 @@ public class Program
         }
 	globalNode.addLLVMList(globalDec);
 
+
+      // global vars
+      List<LLVM> globalVarDec = new ArrayList<LLVM>();
+      for (int i = 0; i < decls.size(); i++) {
+           globalVarDec.add(new GlobalDecLLVM(decls.get(i).getName(), "common", "global", decls.get(i).getType().toLLVMType(), "null", 4));
+      }
+      globalNode.addLLVMList(globalVarDec);
 
       for (int i = 0; i < funcs.size(); i++) {
 	 //System.out.println(funcs.get(i).getName());
@@ -121,14 +117,18 @@ public class Program
              funcArgs.add(funcs.get(i).getParams().get(j).getName());
          }
 
-         struct = new DeclareFuncLLVM(funcs.get(i).getName(), funcs.get(i).getReturnType().toLLVMType(), props, funcArgs);
+         struct = new DefineFuncLLVM(funcs.get(i).getName(), funcs.get(i).getReturnType().toLLVMType(), props, funcArgs);
 
          initNode.addLLVM(struct);
 
 
          List<LLVM> localVars = new ArrayList<LLVM>();
 	 for (int j = 0; j < funcs.get(i).getDecls().size(); j++) {
-              localVars.add(new AllocationLLVM(funcs.get(i).getDecls().get(j).getName(), funcs.get(i).getDecls().get(j).getType().toLLVMType()));
+              if(funcs.get(i).getDecls().get(j).getType().toLLVMType().contains("%struct")) {
+                  localVars.add(new AllocationLLVM( "%" +funcs.get(i).getDecls().get(j).getName(), funcs.get(i).getDecls().get(j).getType().toLLVMType() + "*"));
+              } else {
+                  localVars.add(new AllocationLLVM( "%" +funcs.get(i).getDecls().get(j).getName(), funcs.get(i).getDecls().get(j).getType().toLLVMType()));
+              }
          }
          initNode.addLLVMList(localVars);
 
@@ -142,10 +142,40 @@ public class Program
          // we will keep track of the Block number and Register number for LLVM reference in the exit node (since it is always passed around)
          funcs.get(i).cfg(types, decls, funcs, funcs.get(i), startNode, exitNode);
       }
+
+      List<LLVM> endGlobalDec = new ArrayList<LLVM>();
+
+	List<String> args = new ArrayList<String>();
+         args.add("i8*");
+         args.add("...");
+         LLVM s = new DeclareFuncLLVM("scanf", "i32", args);
+         LLVM p  = new DeclareFuncLLVM("printf", "i32", args);
+	List<String> argsFree = new ArrayList<String>();
+         argsFree.add("i8*");
+         LLVM f  = new DeclareFuncLLVM("free", "void", argsFree);
+	
+         List<String> args1 = new ArrayList<String>();
+         args1.add("i32");
+         LLVM m = new DeclareFuncLLVM("malloc", "i8*", args1);
+
+	endGlobalDec.addAll(Arrays.asList(s,p,m,f));
+        endGlobalDec.add(new GlobalDecLLVM(".println", "private", "unnamed_addr", "constant [5 x i8]", "c\"%ld\\0A\\00", 1));
+        endGlobalDec.add(new GlobalDecLLVM(".print", "private", "unnamed_addr", "constant [5 x i8]", "c\"%ld \\00", 1));
+        endGlobalDec.add(new GlobalDecLLVM(".read", "private", "unnamed_addr", "constant [4 x i8]", "c\"%ld\\00", 1));
+        endGlobalDec.add(new GlobalDecLLVM(".read_scratch", "common", "global", "i32", "0", 4));
+
+      CFGNode lastNode = new CFGNode("", -1); 
+       lastNode.addLLVMList(endGlobalDec);
+
+       cfgNodes.add(lastNode);
+
    }
    public void printLLVM() {
       for (int i = 0; i < cfgNodes.size(); i++) {
          cfgNodes.get(i).printOut();
+         if (i != 0 && i != cfgNodes.size() - 1) {
+	     System.out.println("}\n");
+         }
       }
 
    }

@@ -13,7 +13,7 @@ public class BranchLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println( "br i1 " + cond + ", label " + trueLabel + ", label " + falseLabel );
+         System.out.println( "\tbr i1 " + cond + ", label " + trueLabel + ", label " + falseLabel );
     }
     public String getResultReg() { return "";}
     public String getResultType() {return "";}

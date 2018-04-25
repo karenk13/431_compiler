@@ -37,7 +37,8 @@ public class WhileStatement
       
       //guard.cfg(types, decls, func, curFunc);
       //startNode.addExpression(guard);
-      CFGNode guardNode = new CFGNode("whileguard: " + startNode.name, exitNode.blockNum );
+      //CFGNode guardNode = new CFGNode("whileguard: " + startNode.name, exitNode.blockNum );
+      CFGNode guardNode = new CFGNode( startNode.name, exitNode.blockNum );
       exitNode.incrementBlock();
       guardNode.addGuard(guard);
       guardNode.addLLVMList(guard.toLLVM(types, decls, func, curFunc, startNode, exitNode));  
@@ -46,7 +47,8 @@ public class WhileStatement
       startNode.addChild(guardNode); 
 
       // two more nodes end node and the body
-      CFGNode bodyNode = new CFGNode("whileBody: " + startNode.name, exitNode.blockNum);
+      //CFGNode bodyNode = new CFGNode("whileBody: " + startNode.name, exitNode.blockNum);
+      CFGNode bodyNode = new CFGNode( startNode.name, exitNode.blockNum);
       exitNode.incrementBlock();
       guardNode.addChild(bodyNode);
       bodyNode.addParent(guardNode);
@@ -55,10 +57,15 @@ public class WhileStatement
       bodyNode.addChild(guardNode);
       guardNode.addParent(bodyNode);
 
-      CFGNode endNode = new CFGNode("whileEnd: " + startNode.name, exitNode.blockNum);
+      //CFGNode endNode = new CFGNode("whileEnd: " + startNode.name, exitNode.blockNum);
+      CFGNode endNode = new CFGNode(startNode.name, exitNode.blockNum);
       exitNode.incrementBlock();
       endNode.addParent(guardNode);
       guardNode.addChild(endNode);   
+
+      String op = ((BinaryExpression) guard).getOp();
+      guardNode.addLLVM(new BranchLLVM( op , bodyNode.name + bodyNode.count, exitNode.name + exitNode.count));
+      bodyNode.addLLVM(new BranchImmLLVM(guardNode.name + guardNode.count));
 
       return endNode;
   }

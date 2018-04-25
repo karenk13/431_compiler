@@ -45,6 +45,7 @@ public class ReturnStatement
        String resultType = inst.get(inst.size() - 1).getResultType();
        LLVM ret = new ReturnLLVM(resultType, resultReg);
        exitNode.addLLVMList(inst);
+       exitNode.addLLVM(ret);
        
        return exitNode;
    }

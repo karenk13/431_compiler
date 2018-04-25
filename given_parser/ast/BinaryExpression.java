@@ -89,6 +89,9 @@ public class BinaryExpression
       }
    }
 
+   public String getOp() {
+	return operator.toString();
+   }
 
 
    public void typeOpCheck(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc) {

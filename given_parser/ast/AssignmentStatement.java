@@ -45,13 +45,13 @@ public class AssignmentStatement
        String leftReg = leftInst.get(leftInst.size() - 1).getResultReg();
        String leftType = leftInst.get(leftInst.size() - 1).getResultType();
 
-       LLVM load = new LoadLLVM("%u" + exitNode.regNum, resultType, resultReg);
-       LLVM store = new StoreLLVM(resultType, "%u" + exitNode.regNum, leftType, leftReg);
-       exitNode.incrementReg();
+       //LLVM load = new LoadLLVM("%u" + exitNode.regNum, resultType, resultReg);
+       LLVM store = new StoreLLVM(resultType, resultReg, leftType, leftReg);
+       //exitNode.incrementReg();
 
        List<LLVM> finalList = new ArrayList<LLVM>(sourceInst);
        finalList.addAll(leftInst);
-       finalList.add(load);
+       //finalList.add(load);
        finalList.add(store);
 
        startNode.addLLVMList(finalList);

@@ -11,7 +11,7 @@ public class ReturnLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.print("ret " + type + " " + value);   
+         System.out.println("\tret " + type + " " + value);   
     }
     public String getResultReg() { return "";}
     public String getResultType() {return type;}

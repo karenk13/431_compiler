@@ -22,7 +22,7 @@ public class BinaryLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println(result + " = " + op + " " + type + " " + op1 + ", " + op2 );
+         System.out.println("\t" + result + " = " + op + " " + type + " " + op1 + ", " + op2 );
     }
 
     public String getResultReg() { return result;}

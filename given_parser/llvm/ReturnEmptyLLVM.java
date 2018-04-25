@@ -6,7 +6,7 @@ public class ReturnEmptyLLVM implements LLVM {
     }
 
     public void printOut() {
-         System.out.println("ret void");   
+         System.out.println("\tret void");   
     }
     public String getResultReg() { return "";}
     public String getResultType() {return "";}

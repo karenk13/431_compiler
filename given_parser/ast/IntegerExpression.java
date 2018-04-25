@@ -35,9 +35,10 @@ public class IntegerExpression
 
    public List<LLVM> toLLVM(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
        
-       LLVM inst = new LoadLLVM("%u" + exitNode.regNum, "i32", value);
-       exitNode.incrementReg();       
+//       LLVM inst = new LoadLLVM("%u" + exitNode.regNum, "i32", value);
+ //      exitNode.incrementReg();       
 
+       LLVM inst = new NOPLLVM(value, "i32");
        List<LLVM> list = new ArrayList<LLVM>();
        list.add(inst);
        return list;     
