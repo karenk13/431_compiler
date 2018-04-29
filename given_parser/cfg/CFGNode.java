@@ -94,4 +94,20 @@ public class CFGNode
            } 
        }
    }
+
+   public void printOutARM() {
+       //System.out.println(name + count + ":");
+       for (int i = 0; i < llvm.size(); i++) {
+           llvm.get(i).printOutARM();
+           //if (llvm.get(i) instanceof DefineFuncLLVM) {
+           //     System.out.println("{");
+           //}
+       }
+       for (int i = 0; i < children.size(); i++) {
+           if (children.get(i).count >= this.count || children.get(i).count == -1) {
+                 System.out.println(children.get(i).getLabel());
+                 children.get(i).printOutARM();
+           } 
+       }
+   }
 }

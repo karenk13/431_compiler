@@ -13,7 +13,6 @@ public class Program
    private final List<Function> funcs;
    private final List<CFGNode> cfgNodes;
 
-
    public Program(List<TypeDeclaration> types, List<Declaration> decls,
       List<Function> funcs)
    {
@@ -102,6 +101,8 @@ public class Program
       }
       globalNode.addLLVMList(globalVarDec);
 
+
+ //     int globalBlockNum = 0;
       for (int i = 0; i < funcs.size(); i++) {
 	 //System.out.println(funcs.get(i).getName());
          CFGNode initNode = new CFGNode(funcs.get(i).getName(), 0);
@@ -134,6 +135,7 @@ public class Program
 
 
          CFGNode startNode = new CFGNode(funcs.get(i).getName(), 1);
+         //globalBlockNum = globalBlockNum + 1;
          startNode.addParent(initNode);
          initNode.addChild(startNode);
          cfgNodes.add(initNode);
@@ -141,6 +143,8 @@ public class Program
          exitNode.incrementBlock();
          // we will keep track of the Block number and Register number for LLVM reference in the exit node (since it is always passed around)
          funcs.get(i).cfg(types, decls, funcs, funcs.get(i), startNode, exitNode);
+         
+         
       }
 
       List<LLVM> endGlobalDec = new ArrayList<LLVM>();
@@ -177,6 +181,14 @@ public class Program
 	     System.out.println("}\n");
          }
       }
+   }
 
+   public void printARM() {
+      for (int i = 0; i < cfgNodes.size(); i++) {
+         cfgNodes.get(i).printOutARM();
+         if (i != 0 && i != cfgNodes.size() - 1) {
+	     System.out.println("}\n");
+         }
+      }
    }
 }

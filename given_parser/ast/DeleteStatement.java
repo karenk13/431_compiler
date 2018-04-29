@@ -34,9 +34,6 @@ public class DeleteStatement
    public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
        //expression.cfg(types, decls, func, curFunc);
        startNode.addStatement(this);
-
-
-
        return startNode;
    }
 

@@ -1,0 +1,13 @@
+If statement infinite loop for print (points to itself)
+Weird double labels when printing sometimes
+Make the header for ARM and LLVM (.com and .text etc)
+make end of function things for arm  (eg section	.rodata)
+Display the arm labels of blocks corerctly (eg with the dots)
+fix print statement in ARM
+
+
+notes:
+ARM: always declare the __aeabi_idiv
+
+Load is empty, haven't implemented Store LLVM
+declare -> dont need to do?

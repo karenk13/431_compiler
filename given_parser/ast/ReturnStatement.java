@@ -33,21 +33,40 @@ public class ReturnStatement
    public boolean checkReturn() {
         return true;
    }
-
+   /*
+   public boolean sameNode(CFGNode node1, CFGNode node2) {
+      return node1 instanceof CFGNode && node1.equals(((CFGNode)node2).a); 
+   }
+   */
    public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
        //expression.cfg(types, decls, func, curFunc);
        //CFGNode newNode = new CFGNode(startNode.name, startNode.count + 1);
-       exitNode.addStatement(this);
-       startNode.addChild(exitNode);
-       exitNode.addParent(startNode);
+
+       CFGNode retNode = new CFGNode(startNode.name , exitNode.blockNum);
+       exitNode.incrementBlock();
+
+       startNode.addChild(retNode);
+       retNode.addParent(startNode);
+
+       retNode.addChild(exitNode);
+       exitNode.addParent(retNode);
+
+       retNode.addLLVM(new ReturnEmptyLLVM());
+       retNode.addStatement(this);
+
        List<LLVM> inst = expression.toLLVM(types, decls, func, curFunc, startNode, exitNode);
        String resultReg = inst.get(inst.size() - 1).getResultReg();
        String resultType = inst.get(inst.size() - 1).getResultType();
        LLVM ret = new ReturnLLVM(resultType, resultReg);
-       exitNode.addLLVMList(inst);
-       exitNode.addLLVM(ret);
+       retNode.addLLVMList(inst);
+       retNode.addLLVM(ret);
+
+       // store the value int _retval_
+       // break to the blockLabel       
+
+
        
-       return exitNode;
+       return retNode;
    }
 
 

@@ -31,10 +31,18 @@ public class ReturnEmptyStatement
    }
 
    public CFGNode cfg(List<TypeDeclaration> types, List<Declaration> decls, List<Function> func, Function curFunc, CFGNode startNode, CFGNode exitNode) {
-       startNode.addChild(exitNode);
-       exitNode.addParent(startNode);
-       exitNode.addLLVM(new ReturnEmptyLLVM());
-       return exitNode;
+       CFGNode ret = new CFGNode(startNode.name , exitNode.blockNum);
+       exitNode.incrementBlock();
+
+       startNode.addChild(ret);
+       ret.addParent(startNode);
+
+       ret.addChild(exitNode);
+       exitNode.addParent(ret);
+
+       ret.addLLVM(new ReturnEmptyLLVM());
+
+       return ret;
    }
 
 

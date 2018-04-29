@@ -42,6 +42,9 @@ public class MiniCompiler
             if (args[i].equals("-json")) {
                 System.out.println(json);
             }
+            if (args[i].equals("-arm")) {
+                program.printARM();
+            }
          }
 
       } else {
@@ -55,7 +58,7 @@ public class MiniCompiler
    {
       for (int i = 0; i < args.length; i++)
       {
-         if (args[i].equals("-stack") || args[i].equals("-json")) {
+         if (args[i].equals("-stack") || args[i].equals("-json") || args[i].equals("-arm")) {
 
          }
          else if (args[i].charAt(0) == '-')
